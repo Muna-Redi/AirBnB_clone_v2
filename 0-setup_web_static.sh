@@ -1,37 +1,27 @@
-
 #!/usr/bin/env bash
-# A bash script that sets up your
-# web servers for deployment
+# Bash script that sets up web servers for the deployment of web_static
+sudo apt-get update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
 
-# set Nginx location block
-server="\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\
-\t}"
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+sudo mkdir -p /data/web_static/releases/
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+sudo touch /data/web_static/releases/test/index.html
+sudo echo "<html>
+  <head>
+  </head>
+  <body>
+    Holberton School
+  </body>
+</html>" | sudo tee /data/web_static/releases/test/index.html
 
-# set nginx config file
-file="/etc/nginx/sites-available/default"
+sudo ln -s -f /data/web_static/releases/test/ /data/web_static/current
 
-# Update system
-sudo apt-get update -y
+sudo chown -R ubuntu:ubuntu /data/
 
-# Install Nginx
-sudo apt-get install nginx -y
+sudo sed -i '/listen 80 default_server/a location /hbnb_static { alias /data/web_static/current/;}' /etc/nginx/sites-enabled/default
 
-# Create relevant directories
-sudo mkdir -p "/data/web_static/releases/test/"
-sudo mkdir "/data/web_static/shared/"
-
-# create dummy html page
-echo "Wireless" | sudo tee "/data/web_static/releases/test/index.html"
-
-# remove and create new symlink
-sudo rm -f "/data/web_static/current"
-sudo ln -s "/data/web_static/releases/test/" "/data/web_static/current"
-
-# Give user ownership of /data/ dir
-sudo chown -R ubuntu:ubuntu "/data/"
-
-# add location block to nginx config file
-sudo sed -i "29i\ $server" "$file"
-
-# restart nginx service
 sudo service nginx restart
