@@ -33,7 +33,7 @@ def c_is_fun(text):
 
 @app.route('/python/')
 @app.route('/python/<text>')
-def python_with_text(text='is cool'):
+def python_text(text='is cool'):
     """
         Reformats text based on optional variable
     """
@@ -49,7 +49,7 @@ def number(n=None):
 
 
 @app.route('/number_template/<int:n>')
-def number_template(n):
+def dynamic_number(n):
     """
         Retrieves template for request
     """
